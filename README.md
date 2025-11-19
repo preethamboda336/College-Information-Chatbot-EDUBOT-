@@ -1,302 +1,139 @@
-# ===============================================
-# EduBot: Professional College Information Assistant (PyDatalog + NLP)
-# ===============================================
+# 🎓 College Information Chatbot
 
-# --- Step 1: Install dependencies ---
-!pip install pyDatalog --quiet
-!pip install fuzzywuzzy python-Levenshtein --quiet
+A simple and smart chatbot that provides instant answers to common college-related questions like admissions, courses, fees, hostels, placements, contact details, and more.
 
-# --- Step 2: Imports ---
-from pyDatalog import pyDatalog
-from fuzzywuzzy import fuzz
-import re
-import random
+This project uses datasets (`intents.csv` and `college_data.json`) along with your Python chatbot script to respond to student queries.
 
-# --- Step 3: Initialize ---
-pyDatalog.clear()
+---
 
-# ===============================================
-# KNOWLEDGE BASE — EXTENDED DATASET
-# ===============================================
+## 🚀 Features
 
-# --- College Info ---
-pyDatalog.assert_fact('college', 'ManavRachna College of Engineering', 'Faridabad', 'Top-ranked AI and Tech Institution in India')
+* Provides information about:
 
-# --- Departments ---
-departments = [
-    ('CSE', 'Computer Science & Engineering – 120 intakes'),
-    ('ECE', 'Electronics & Communication Engineering – 90 intakes'),
-    ('ME', 'Mechanical Engineering – 60 intakes'),
-    ('AI&ML', 'Artificial Intelligence & Machine Learning – 60 intakes'),
-    ('EEE', 'Electrical & Electronics Engineering – 60 intakes'),
-    ('CIVIL', 'Civil Engineering – 60 intakes'),
-    ('IT', 'Information Technology – 90 intakes'),
-    ('BIO', 'Biotechnology – 45 intakes'),
-]
-for d in departments:
-    pyDatalog.assert_fact('department', *d)
+  * Admissions
+  * Fees
+  * Courses offered
+  * Faculty & departments
+  * Hostels & facilities
+  * Placements
+  * Events & calendars
+  * Contact details
+* Easy to train and modify
+* Dataset included for customization
+* Works with ML/NLP-based chatbot logic
 
-# --- Courses ---
-courses = [
-    ('B.Tech CSE', '4 years', 'Focus on AI, Data Science, and Cloud Computing'),
-    ('B.Tech ECE', '4 years', 'Advanced Communication Systems and VLSI'),
-    ('B.Tech ME', '4 years', 'Manufacturing, Design, and Automation'),
-    ('B.Tech AI&ML', '4 years', 'Deep Learning, NLP, Computer Vision'),
-    ('B.Tech IT', '4 years', 'Software Engineering and Cybersecurity'),
-    ('M.Tech CSE', '2 years', 'Advanced Data Analytics and IoT'),
-    ('M.Tech AI', '2 years', 'AI Research, Robotics, and NLP'),
-    ('M.Tech VLSI', '2 years', 'Chip Design and Embedded Systems'),
-    ('PhD CSE', '5 years', 'Distributed Systems and Quantum Computing'),
-    ('PhD AI', '5 years', 'AI Ethics, Generative Models, and AGI Research'),
-]
-for c in courses:
-    pyDatalog.assert_fact('course', *c)
+---
 
-# --- Facilities ---
-facilities = [
-    ('Library', 'Open 8 AM – 8 PM | 100,000+ books | IEEE, ACM Digital access'),
-    ('Hostel', 'Separate hostels for boys and girls | 24×7 Wi-Fi and security'),
-    ('Cafeteria', 'Multi-cuisine food court open till 10 PM'),
-    ('Sports Complex', 'Cricket, Football, Badminton, Gym & Swimming Pool'),
-    ('Auditorium', '800-seater central hall for conferences and fests'),
-    ('Innovation Hub', '24×7 open makerspace for startups and robotics'),
-]
-for f in facilities:
-    pyDatalog.assert_fact('facility', *f)
+## 📂 Project Structure
 
-# Add 100 computer labs dynamically
-for i in range(1, 101):
-    pyDatalog.assert_fact('facility', f'Computer Lab {i}', f'{20 + i} high-end systems | GPU-enabled | Open 9 AM – 7 PM')
+```
+📁 college-information-chatbot
+│
+├── college_bot.ipynb           # Main chatbot code (from Google Colab)
+├── intents.csv                 # User utterances + responses dataset
+├── college_data.json           # Knowledge base of college information
+├── requirements.txt            # Python dependencies
+└── README.md                   # Project documentation
+```
 
-# --- Faculty ---
-faculty_list = [
-    ('Dr. Meena Sharma', 'Dean – AI Department | 15 years research in NLP'),
-    ('Dr. Rajesh Verma', 'Professor – CSE | Cloud Computing and Data Mining expert'),
-    ('Prof. Neha Kapoor', 'Head – AI & ML | Deep Learning specialist | Ex-Microsoft Research'),
-    ('Dr. A.K. Rao', 'Professor – ECE | IoT and Embedded Systems'),
-    ('Dr. Jyoti Mishra', 'Associate Professor – Biotechnology | Genetic Engineering'),
-]
-for f in faculty_list:
-    pyDatalog.assert_fact('faculty', *f)
+---
 
-# Add 200 faculty entries dynamically
-for i in range(1, 201):
-    dept = random.choice(['CSE', 'ECE', 'AI&ML', 'ME', 'EEE', 'IT', 'BIO', 'CIVIL'])
-    pyDatalog.assert_fact('faculty', f'Dr. Faculty {i}', f'Assistant Professor – {dept} | Research in AI Topic #{i}')
+## 🛠️ Tech Stack
 
-# --- Research Labs ---
-labs = [
-    ('AI Drone Lab', 'Autonomous navigation and vision AI'),
-    ('Robotics Lab', 'Humanoid robotics and reinforcement learning projects'),
-    ('NLP Lab', 'Speech processing and chatbot development'),
-    ('Quantum Computing Lab', 'Quantum ML and AI acceleration research'),
-    ('Bioinformatics Lab', 'AI-driven genomic analysis'),
-]
-for l in labs:
-    pyDatalog.assert_fact('research', *l)
+* **Python**
+* **NLTK / sklearn / simple NLP logic** (based on your code)
+* **JSON Data Handling**
+* **Google Colab / Jupyter Notebook**
 
-# Add 50 more labs dynamically
-for i in range(1, 51):
-    pyDatalog.assert_fact('research', f'AI Innovation Lab {i}', f'Applied AI Research Project #{i} on smart systems')
+---
 
-# --- Events ---
-events = [
-    ('TechNova', 'National-level AI and Tech Fest every March'),
-    ('InnovateX', 'Startup Hackathon with ₹2 Lakh prizes'),
-    ('CulturalFest', '3-day music and dance festival every December'),
-    ('RoboWars', 'Autonomous Robot Battle Event'),
-    ('DataVerse', 'Annual Data Science Summit with Industry Speakers'),
-]
-for e in events:
-    pyDatalog.assert_fact('event', *e)
+## 📥 Installation & Setup
 
-# Add 100 seminars dynamically
-for i in range(1, 101):
-    pyDatalog.assert_fact('event', f'Seminar {i}', f'Guest Lecture on AI Innovation Topic #{i}')
+### 1️⃣ Clone the repository
 
-# --- Placements ---
-placements = [
-    ('2021', 'Avg: 6.5 LPA | Highest: 28 LPA @ Google'),
-    ('2022', 'Avg: 6.8 LPA | Highest: 32 LPA @ Microsoft'),
-    ('2023', 'Avg: 7.5 LPA | Highest: 40 LPA @ Amazon'),
-    ('2024', 'Avg: 8.2 LPA | Highest: 45 LPA @ Google'),
-    ('2025', 'Avg: 9.0 LPA | Highest: 52 LPA @ OpenAI'),
-]
-for p in placements:
-    pyDatalog.assert_fact('placement', *p)
+```
+git clone https://github.com/your-username/your-repo-name.git
+```
 
-# ===============================================
-# QUERY FUNCTIONS
-# ===============================================
+### 2️⃣ Install dependencies
 
-def get_category_info(category):
-    mapping = {
-        'college': 'college(X,Y,Z)',
-        'department': 'department(X,Y)',
-        'course': 'course(X,Y,Z)',
-        'event': 'event(X,Y)',
-        'facility': 'facility(X,Y)',
-        'faculty': 'faculty(X,Y)',
-        'placement': 'placement(X,Y)',
-        'research': 'research(X,Y)',
-    }
-    q = pyDatalog.ask(mapping.get(category, ''))
-    return q.answers if q else []
+```
+pip install -r requirements.txt
+```
 
-def get_info(category, keyword=None):
-    data = get_category_info(category)
-    if not data:
-        return "No data available."
+### 3️⃣ Run the chatbot
 
-    if keyword:
-        data = [d for d in data if keyword.lower() in str(d).lower()]
-        if not data:
-            return f"No results found for '{keyword}'."
+If using the notebook:
 
-    response = ""
-    for d in data[:20]:  # Limit display for readability
-        response += "- " + " | ".join(map(str, d)) + "\n"
-    if len(data) > 20:
-        response += f"\n...and {len(data) - 20} more entries.\n"
-    return response
+```
+Open college_bot.ipynb → Run all
+```
 
-# ===============================================
-# CHATBOT LOGIC
-# ===============================================
+If you convert `.ipynb` to `.py`:
 
-def interpret_query(user_input):
-    keywords = {
-        'college': ['college', 'about college', 'about abc'],
-        'department': ['department', 'branches', 'streams'],
-        'course': ['course', 'program', 'degree'],
-        'event': ['event', 'fest', 'seminar', 'hackathon'],
-        'facility': ['facility', 'library', 'hostel', 'canteen', 'lab', 'sports', 'auditorium'],
-        'faculty': ['faculty', 'teacher', 'professor', 'staff'],
-        'placement': ['placement', 'salary', 'package', 'hiring'],
-        'research': ['research', 'lab', 'center', 'innovation'],
-    }
+```
+python chatbot.py
+```
 
-    for cat, words in keywords.items():
-        for w in words:
-            if fuzz.partial_ratio(w, user_input) > 80:
-                return cat
-    return None
+---
 
-def generate_response(category, user_input):
-    if not category:
-        return "I’m sorry, I couldn’t understand your question. Please rephrase or specify a category."
+## 📊 Dataset Description
 
-    keyword = None
-    match = re.search(r'\b(20\d{2})\b', user_input)
-    if match:
-        keyword = match.group(1)
+### **intents.csv**
 
-    data = get_info(category, keyword)
-    if data.startswith("No"):
-        return data
+This file contains:
 
-    titles = {
-        'college': "COLLEGE OVERVIEW",
-        'department': "DEPARTMENTS OFFERED",
-        'course': "ACADEMIC PROGRAMS",
-        'event': "EVENTS AND SEMINARS",
-        'facility': "CAMPUS FACILITIES",
-        'faculty': "FACULTY INFORMATION",
-        'placement': "PLACEMENT RECORDS",
-        'research': "RESEARCH AND INNOVATION LABS",
-    }
+* user utterances
+* chatbot responses
+* tags and context
 
-    return f"{titles[category]}\n{'=' * 40}\n{data}"
+Used for training the chatbot.
 
-# ===============================================
-# RUN CHATBOT
-# ===============================================
+### **college_data.json**
 
-def edubot():
-    print("Welcome to EduBot — Your College Information Assistant.")
-    print("You can ask questions like:")
-    print("  - Show me the AI & ML department")
-    print("  - What are placements in 2025?")
-    print("  - List all research labs\n")
-    print("Type 'exit' to quit.\n")
+This file works as:
 
-    while True:
-        user = input("You: ").strip().lower()
-        if user in ['exit', 'quit']:
-            print("EduBot: Goodbye! Have a great day.")
-            break
+* a knowledge base
+* structure for courses, fees, departments, events
 
-        category = interpret_query(user)
-        response = generate_response(category, user)
-        print("\n" + response + "\n")
+Your chatbot can fetch answers using this file.
 
-# ===============================================
-# START BOT
-# ===============================================
-edubot()
-    ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 325.5/325.5 kB 5.4 MB/s eta 0:00:00
-  Installing build dependencies ... done
-  Getting requirements to build wheel ... done
-  Preparing metadata (pyproject.toml) ... done
-  Building wheel for pyDatalog (pyproject.toml) ... done
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 153.3/153.3 kB 3.4 MB/s eta 0:00:00
-   ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 3.2/3.2 MB 36.4 MB/s eta 0:00:00
-Welcome to EduBot — Your College Information Assistant.
-You can ask questions like:
-  - Show me the AI & ML department
-  - What are placements in 2025?
-  - List all research labs
+---
 
-Type 'exit' to quit.
+## 🌟 Example Queries
 
-You: Show me the AI & ML department
+You can ask:
 
-DEPARTMENTS OFFERED
-========================================
-- BIO | Biotechnology – 45 intakes
-- IT | Information Technology – 90 intakes
-- CIVIL | Civil Engineering – 60 intakes
-- EEE | Electrical & Electronics Engineering – 60 intakes
-- AI&ML | Artificial Intelligence & Machine Learning – 60 intakes
-- ME | Mechanical Engineering – 60 intakes
-- ECE | Electronics & Communication Engineering – 90 intakes
-- CSE | Computer Science & Engineering – 120 intakes
+* "When do admissions open?"
+* "What is the B.Tech fee?"
+* "Is hostel available?"
+* "Who is the HOD of Mechanical?"
+* "What are library timings?"
+* "How to apply online?"
+
+---
+
+## 🧩 How to Customize
+
+* Update `intents.csv` → to add more Q&A
+* Update `college_data.json` → to add college-specific information
+* Update responses in the code if needed
+
+---
+
+## 🏫 About
+
+This chatbot helps students quickly access college information without navigating through websites or brochures.
+
+---
+
+## 🤝 Contributing
+
+Feel free to fork the repo, open issues, or submit pull requests.
+
+---
 
 
-You: What are placements in 2025?
-
-PLACEMENT RECORDS
-========================================
-- 2025 | Avg: 9.0 LPA | Highest: 52 LPA @ OpenAI
 
 
-You: List all research labs
 
-CAMPUS FACILITIES
-========================================
-- Computer Lab 100 | 120 high-end systems | GPU-enabled | Open 9 AM – 7 PM
-- Computer Lab 99 | 119 high-end systems | GPU-enabled | Open 9 AM – 7 PM
-- Computer Lab 98 | 118 high-end systems | GPU-enabled | Open 9 AM – 7 PM
-- Computer Lab 97 | 117 high-end systems | GPU-enabled | Open 9 AM – 7 PM
-- Computer Lab 96 | 116 high-end systems | GPU-enabled | Open 9 AM – 7 PM
-- Computer Lab 95 | 115 high-end systems | GPU-enabled | Open 9 AM – 7 PM
-- Computer Lab 94 | 114 high-end systems | GPU-enabled | Open 9 AM – 7 PM
-- Computer Lab 93 | 113 high-end systems | GPU-enabled | Open 9 AM – 7 PM
-- Computer Lab 92 | 112 high-end systems | GPU-enabled | Open 9 AM – 7 PM
-- Computer Lab 91 | 111 high-end systems | GPU-enabled | Open 9 AM – 7 PM
-- Computer Lab 90 | 110 high-end systems | GPU-enabled | Open 9 AM – 7 PM
-- Computer Lab 89 | 109 high-end systems | GPU-enabled | Open 9 AM – 7 PM
-- Computer Lab 88 | 108 high-end systems | GPU-enabled | Open 9 AM – 7 PM
-- Computer Lab 87 | 107 high-end systems | GPU-enabled | Open 9 AM – 7 PM
-- Computer Lab 86 | 106 high-end systems | GPU-enabled | Open 9 AM – 7 PM
-- Computer Lab 85 | 105 high-end systems | GPU-enabled | Open 9 AM – 7 PM
-- Computer Lab 84 | 104 high-end systems | GPU-enabled | Open 9 AM – 7 PM
-- Computer Lab 83 | 103 high-end systems | GPU-enabled | Open 9 AM – 7 PM
-- Computer Lab 82 | 102 high-end systems | GPU-enabled | Open 9 AM – 7 PM
-- Computer Lab 81 | 101 high-end systems | GPU-enabled | Open 9 AM – 7 PM
-
-...and 86 more entries.
-
-
-You: exit
-EduBot: Goodbye! Have a great day.
